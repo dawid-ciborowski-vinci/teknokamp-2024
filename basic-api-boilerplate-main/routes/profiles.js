@@ -1,16 +1,18 @@
 const express = require('express');
 const { csvToJson, jsonToCsv } = require('../utils/csvjson');
+const path = require('node:path');
 
 const router = express.Router();
 
-const csvPath = '../data/data.csv';
+const csvPath = path.join(__dirname, '/../data/data.csv');
 
-router.get('/', (req, res) => {
-    const data = csvToJson(csvPath);
+router.get('/', async (req, res) => {
+    const data = await csvToJson(csvPath);
+    console.log(data);
     return res.json(data);
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const label = req.body.label;
 
   const profil = {
@@ -18,7 +20,7 @@ router.post('/', (req, res) => {
   };
 
   const json = JSON.stringify(profil);
-  jsonToCsv(json, csvPath);
+  await jsonToCsv(json, csvPath);
 
   return res.json(json);
 });
