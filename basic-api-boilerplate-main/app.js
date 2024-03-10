@@ -7,7 +7,7 @@ const corsOptions = {
   origin: ['http://localhost:8080'],
 };
 
-const profilesRouter = require('./routes/profiles');
+const profilesRouter = require('./routes/conso');
 
 const app = express();
 
@@ -18,6 +18,6 @@ app.use(cookieParser());
 
 app.use(cors(corsOptions));
 
-app.use('/profiles', profilesRouter);
+app.use('/conso', profilesRouter);
 
 module.exports = app;

@@ -1,4 +1,19 @@
 @baseUrl = http://localhost:3000
 
 ### Read all profiles
-GET {{baseUrl}}/profiles
+GET {{baseUrl}}/conso
+
+
+### Create a new conso
+POST {{baseUrl}}/conso
+Content-Type: application/json
+
+{
+    "time": 2023-06-16,
+    "consommation_total_grid": "10.765000000001237",
+    "consommation_solaire": "51.24755999999977",
+    "consommation_thermal": "-22.38118812159919",
+    "consommation_eolienne": "-12.932153791999532",
+    "consommation_hydroelectrique": "-1.2411952895999552",
+    "consommation_nucleaire": "-3.926808319999858"
+}
