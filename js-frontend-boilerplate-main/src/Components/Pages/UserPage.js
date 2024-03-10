@@ -11,6 +11,49 @@ const UserPage = () => {
             <canvas id="priceChart"></canvas>
             <canvas id="impactChart"></canvas>
         </div>
+        
+        <table>
+        <thead>
+          <tr>
+            <th>Énergie</th>
+            <th>gCO2/kWh</th>
+            <th>Prix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Nucleaire</td>
+            <td>6</td>
+            <td>0,03€</td>
+          </tr>
+          <tr>
+            <td>Hydro-electrique</td>
+            <td>6</td>
+            <td>0.25€</td>
+          </tr>
+          <tr>
+            <td>Éolien</td>
+            <td>14.1</td>
+            <td>0.07€</td>
+          </tr>
+          <tr>
+            <td>Panneau voltaique</td>
+            <td>49.9</td>
+            <td>0.10€</td>
+          </tr>
+          <tr>
+            <td>Gaz</td>
+            <td>465</td>
+            <td>0.04€</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="speedometer">
+      <div class="dial"></div>
+      <div class="needle"></div>
+      </div>
+
     `;
     const energyCtx = document.getElementById('energyChart').getContext('2d');
 
@@ -20,21 +63,35 @@ const UserPage = () => {
 
     const energyData = [25, 25, 20, 15, 15];
     const priceData = [40, 60, 50, 30, 20];
-    const impactData = [40, 60];
+    const impactData = [50, 50];
 
   
+    const priceLabels = ['PRIX SOL', 'PRIX EOL', 'PRIX THER', 'PRIX NUC', 'PRIX HYD'];
+
+    const energyLabels = ['Soleil', 'éoliennes', 'thermique', 'nucléaire', 'hydroélectrique']; // Correspond à priceLabels
+    
+    const hyLabels = ['BON', 'MAUVAIS']
+
+    const legendOptions = {
+        position: 'top',
+        labels: {
+            font: {
+                size: 20
+            }
+        }
+    };
     
     const energyChart = createChart(energyCtx, {
         type: 'pie',
         data: {
-            labels: ['Soleil', 'éoliennes', 'thermique', 'nucléaire', 'hydrogène'],
+            labels: energyLabels,
             datasets: [{ data: energyData, backgroundColor: ['red', 'blue', 'yellow', 'green', 'purple'] }]
         },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'top',
+                    legend: legendOptions,
                 },
                 title: {
                     display: true,
@@ -47,14 +104,14 @@ const UserPage = () => {
     const priceChart = createChart(priceCtx, {
         type: 'pie',
         data: {
-            labels: ['PRIX SOL', 'PRIX EOL', 'PRIX THER', 'PRIX NUC', 'PRIX HYD'],
+            labels: priceLabels,
             datasets: [{ data: priceData, backgroundColor: ['red', 'blue', 'yellow', 'green', 'purple'] }]
         },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'left',
+                    legend: legendOptions,
                 },
                 title: {
                     display: true,
@@ -64,17 +121,17 @@ const UserPage = () => {
         },
     });
 
-    createChart(impactCtx, {
+   const impacts=  createChart(impactCtx, {
         type: 'pie',
         data: {
-            labels: ['HYDR VERT', 'THERMAL'],
+            labels: hyLabels,
             datasets: [{ data: impactData, backgroundColor: ['green', 'orange'] }]
         },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'bottom',
+                    legend: legendOptions,
                 },
                 title: {
                     display: true,
@@ -88,33 +145,73 @@ const UserPage = () => {
         const activePoints = energyChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
         if (activePoints.length) {
             const { index } = activePoints[0];
-            energyData[index] += 1;  // Augmente la consommation
+            energyData[index] += 1;  
+            impactData[index] += 10; // Augmente la consommation de la source cliquée
             energyChart.update();
-
+            impacts.update();
+    
             // Logique pour augmenter le prix
             if (index < priceData.length) {
-                priceData[index] += index + 1;  // Exemple: augmenter plus pour les premiers éléments
+                priceData[index] += index + 1;
+                impactData[index] += 10; 
+                impacts.update();  // Exemple: augmenter plus pour les premiers éléments
                 priceChart.update();
             }
+
+           
+            
+            
         }
     });
+
+    
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'A' || event.key === 'a') {
+            // Parcourir le tableau energyData pour diminuer la consommation pour chaque source d'énergie
+            energyData.forEach((value, index) => {
+                if (value > 0) {  // Vérifiez pour ne pas diminuer en dessous de 0
+                    energyData[index] -= 1;  // Diminue la consommation pour cette source
+                }
+    
+                // Si vous voulez également ajuster les prix en conséquence, ajoutez votre logique ici
+                // Assurez-vous que priceData a un élément correspondant à cet index
+                if (priceData[index] > 0) {
+                    priceData[index] -= 1;  // Diminue le prix pour cette source
+                }
+            });
+    
+            // Après la mise à jour des données, mettez à jour les graphiques pour refléter les changements
+            energyChart.update();
+            priceChart.update();
+    
+            // Mettez à jour impactChart si nécessaire
+            // impactChart.update();
+        }
+    });
+    
+    
+    
 
     priceChart.canvas.addEventListener('click', (event) => {
         const activePoints = priceChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
         if (activePoints.length) {
             const { index } = activePoints[0];
+    
             
-            priceData[index] += 5;  // Ajoute une quantité significative pour voir le changement
+            const increment = 5; // Ou toute autre logique de calcul
+            priceData[index] += increment; // Augmente le prix
             priceChart.update();
     
-            // Si vous voulez lier cela avec les autres graphiques, ajoutez la logique correspondante ici
-            // Par exemple, augmenter l'impact ou la consommation d'énergie en fonction du prix cliqué
-            impactData[index] += 10; // exemple de modification des données d'impact
-            energyChart.update();
+            if (index < energyData.length) {
+                energyData[index] += increment / 2; // Augmente également la consommation d'énergie
+                energyChart.update();
+            }
         }
     });
-    
 
+    
+    
+    
     
 };
 
