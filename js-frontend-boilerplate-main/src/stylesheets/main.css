@@ -1,0 +1,42 @@
+#myChart {
+    width: 100%; /* Définir la largeur à 100% pour s'adapter à la largeur du conteneur parent */
+    max-width: 600px;
+    max-height: 400px; /* Limiter la largeur maximale à 600px */
+    height: auto; /* Permettre à la hauteur de s'ajuster automatiquement en fonction de la largeur */
+    margin: auto; /* Centrer le graphique si le conteneur est plus large */
+
+    font:bold;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px; /* Ajoute un espacement en haut de la table */
+  }
+  
+  /* Style pour les cellules de l'en-tête */
+  th {
+    background-color: #f2f2f2;
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  /* Style pour les cellules de données */
+  td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  /* Style pour les lignes impaires */
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Style pour les lignes au survol de la souris */
+  tr:hover {
+    background-color: #f2f2f2;
+  }
+
+  
